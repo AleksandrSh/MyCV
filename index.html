@@ -7,17 +7,42 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@tailwindcss/browser@latest"></script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
 <body class="bg-gray-100">
-    <header class="bg-blue-600 text-white py-4 md:py-6">
+    <header class="bg-blue-600 text-white py-4 md:py-6 sticky top-0 z-50">
         <div class="container mx-auto px-4">
             <div class="flex flex-col md:flex-row items-center justify-between">
                 <h1 class="text-2xl md:text-3xl font-semibold">Alexander Shabanov</h1>
                 <p class="text-md md:text-lg">Senior Technical Recruiter | HR Automation & Hiring Strategy</p>
+            </div>
+            <div class="mt-3 flex flex-wrap items-center gap-4 text-sm md:text-base">
+                <a href="#experience" class="text-white underline hover:no-underline inline-flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4" aria-hidden="true"><path d="M19.5 14.25v2.25A2.25 2.25 0 0 1 17.25 18.75H6.75A2.25 2.25 0 0 1 4.5 16.5V7.5A2.25 2.25 0 0 1 6.75 5.25h6.128a2.25 2.25 0 0 1 1.59.659l3.123 3.123a2.25 2.25 0 0 1 .659 1.59v3.628z"/><path d="M12 5.25v3.75A1.5 1.5 0 0 0 13.5 10.5h3.75"/></svg>
+                    Experience
+                </a>
+                <a href="#tools-technologies" class="text-white underline hover:no-underline inline-flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4" aria-hidden="true"><path d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.56.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.527-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894z"/><path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>
+                    Tools & Technologies
+                </a>
+                <a href="#education" class="text-white underline hover:no-underline inline-flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4" aria-hidden="true"><path d="M11.7 2.516a1 1 0 0 1 .6 0l8.25 2.75a1 1 0 0 1 0 1.9L15 9.06v4.69a6.002 6.002 0 0 0 3 5.197v1.553a.75.75 0 0 1-1.174.623L15 20.25l-1.826 1.873A.75.75 0 0 1 12 21.5v-1.553a6.002 6.002 0 0 0-3-5.197V9.06L2.45 7.166a1 1 0 0 1 0-1.9l8.25-2.75z"/></svg>
+                    Education
+                </a>
+                <a href="#blogs-projects" class="text-white underline hover:no-underline inline-flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4" aria-hidden="true"><path d="M6.75 3A2.25 2.25 0 0 0 4.5 5.25v13.5A2.25 2.25 0 0 0 6.75 21h10.5A2.25 2.25 0 0 0 19.5 18.75V8.25a.75.75 0 0 0-.22-.53l-4.5-4.5a.75.75 0 0 0-.53-.22H6.75zM15 8.25V4.06L19.19 8.25H15z"/></svg>
+                    Blogs & Projects
+                </a>
+                <a href="#languages" class="text-white underline hover:no-underline inline-flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4" aria-hidden="true"><path d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM3.75 12a8.25 8.25 0 0 1 12.908-6.652A12.28 12.28 0 0 1 12 6.75c-2.325 0-4.47.66-6.285 1.797A8.21 8.21 0 0 1 3.75 12zm8.25 8.25a8.24 8.24 0 0 1-6.285-3.047C7.53 16.59 9.675 15.75 12 15.75s4.47.84 6.285 2.453A8.24 8.24 0 0 1 12 20.25zm6.285-4.703A12.28 12.28 0 0 0 12 17.25c-2.325 0-4.47-.84-6.285-2.453A8.21 8.21 0 0 0 3.75 12c0-.844.123-1.659.35-2.428A12.281 12.281 0 0 1 12 9.75c2.325 0 4.47.84 6.285 2.453.226.769.35 1.584.35 2.428z"/></svg>
+                    Languages
+                </a>
+                <a href="#contact" class="text-white underline hover:no-underline inline-flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4" aria-hidden="true"><path d="M1.5 8.67v6.58a2.25 2.25 0 0 0 2.25 2.25h16.5A2.25 2.25 0 0 0 22.5 15.25V8.67l-8.754 4.377a2.25 2.25 0 0 1-1.992 0L1.5 8.67z"/><path d="M22.5 7.5v-.008a2.25 2.25 0 0 0-2.25-2.242H3.75A2.25 2.25 0 0 0 1.5 7.492V7.5l9.246 4.624a.75.75 0 0 0 .656 0L22.5 7.5z"/></svg>
+                    Contact
+                </a>
             </div>
         </div>
     </header>
@@ -26,12 +51,11 @@
         <section class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-6">
             <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Summary</h2>
             <p class="text-gray-700 leading-relaxed">
-                Technical Recruiter and TA Manager with extensive experience in sourcing, digital marketing,
-                streamlining, and building semi-automated recruitment processes.
+                Technical Recruiter with a passion for tech. Extensive expertise in sourcing, AI-driven recruiting solutions, digital marketing techniques applied to hiring, and workflow automation. Skilled in streamlining recruitment processes to deliver faster, smarter results.
             </p>
         </section>
 
-        <section class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-6">
+        <section id="experience" class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-6 scroll-mt-24">
             <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Experience</h2>
             <div class="space-y-6">
                 <article class="border-l-4 border-blue-500 pl-4 py-2">
@@ -155,7 +179,7 @@
                     </ul>
                 </article>
                  <article class="border-l-4 border-blue-500 pl-4 py-2">
-                    <h3 class="text-lg font-semibold text-gray-800">LTD <Rost Consulting> - Recruiter</h3>
+                    <h3 class="text-lg font-semibold text-gray-800">LTD Rost Consulting - Recruiter</h3>
                     <p class="text-gray-600 text-sm mb-1">June 2005 - August 2007 (2 years 3 months)</p>
                     <ul class="list-disc list-inside text-gray-700 leading-relaxed">
                          <li>Recruitment</li>
@@ -166,63 +190,47 @@
             </div>
         </section>
 
-        <section class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-6">
-            <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Knowledge Areas</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <h3 class="font-semibold text-gray-700 mb-2">Languages</h3>
-                    <ul class="list-disc list-inside text-gray-600">
-                        <li>Hebrew (Full Professional)</li>
-                        <li>Russian (Native or Bilingual)</li>
-                        <li>English (Full Professional)</li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="font-semibold text-gray-700 mb-2">Publications</h3>
-                    <ul class="list-disc list-inside text-gray-600">
-                         <li>Tuning Up the Small-Data-based Recruitment Process</li>
-                        <li>Изготовление стула и понимание компетенций что общего?</li>
-                        <li>Естественный алгоритм оценки персонала</li>
-                        <li>The Art of Imperfect Selection: Embracing The Method of Deliberate Mistakes in Recruitment</li>
-                    </ul>
-                </div>
-                 <div>
-                    <h3 class="font-semibold text-gray-700 mb-2">Tools & Technologies</h3>
-                    <ul class="list-disc list-inside text-gray-600">
-                         <li>LinkedIn Recruiter</li>
-                        <li>GitHub</li>
-                        <li>Stack Overflow</li>
-                        <li>Facebook Search</li>
-                        <li>Web Scrappers: Data Miner, Instant Data Scraper</li>
-                         <li>Basic JavaScript</li>
-                        <li>Google Custom Search Engines</li>
-                        <li>Chatfuel</li>
-                        <li>ATS: Greenhouse, Taleo, CVNext, Nilosoft</li>
-                        <li>Developing an Employee Value Proposition (EVP)</li>
-                        <li>Running Facebook and Google campaigns</li>
-                        <li>Google Analytics & Google Tag Manager</li>
-                        <li>Theory of constraints</li>
-                        <li>Management theory of Izhak Adizes</li>
-                        <li>Getting things Done (GTD)</li>
-                    </ul>
-                </div>
-                 <div>
-                    <h3 class="font-semibold text-gray-700 mb-2">Tools & Technologies</h3>
-                    <ul class="list-disc list-inside text-gray-600">
-                         <li>Chatfuel, Phantombuster, Greenhouse</li>
-                        <li>Taleo, Niloosoft, CVNext, Salesforce</li>
-                        <li>JavaScript (basic level), SQL Queries (basic level)</li>
-                        <li>Google CSE, LinkedIn Recruiter</li>
-                        <li>Google Ads, Google Analytics, Google Tag Manager</li>
-                        <li>Facebook Ads Manager, Zapier</li>
-                        <li>GitHub, Stack Overflow, Figma, bubble</li>
-                        <li>Confluence, MS Word, Excel, PowerPoint, Visio, MS Project, Outlook.</li>
-                    </ul>
-                </div>
+        <section id="tools-technologies" class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-6 scroll-mt-24">
+            <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Tools & Technologies</h2>
+            <div class="-m-1 text-gray-700">
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">LinkedIn Recruiter</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">GitHub</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Stack Overflow</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Facebook Search</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Web Scrappers: Data Miner</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Instant Data Scraper</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Basic JavaScript</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">SQL Queries (basic)</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Google CSE</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Chatfuel</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">ATS: Greenhouse</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Taleo</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">CVNext</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Niloosoft</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Salesforce</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">EVP Development</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Facebook & Google Campaigns</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Google Ads</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Google Analytics</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Google Tag Manager</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Facebook Ads Manager</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Zapier</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Theory of constraints</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Adizes Management Theory</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">GTD</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Figma</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">bubble</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Confluence</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">MS Word</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Excel</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">PowerPoint</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Visio</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">MS Project</span>
+                <span class="inline-block px-2 py-1 m-1 rounded-full bg-gray-100 text-gray-700 text-sm">Outlook</span>
             </div>
         </section>
 
-        <section class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-6">
+        <section id="education" class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-6 scroll-mt-24">
             <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Education</h2>
             <div class="space-y-4">
                 <article>
@@ -232,22 +240,58 @@
             </div>
         </section>
 
-        <section class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-6">
-            <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Blogs</h2>
-             <p class="text-gray-700 leading-relaxed mb-4">
-                Check out my blogs for insights on recruitment and the Israeli high-tech job market:
-            </p>
+        <section id="blogs-projects" class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-6 scroll-mt-24">
+            <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Blogs & Projects</h2>
+            <div class="space-y-6">
+                <div>
+                    <h3 class="font-semibold text-gray-700 mb-2">Projects</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="rounded-lg border border-gray-200 p-4 md:hover:shadow-lg transition-shadow">
+                            <div class="text-lg font-semibold text-gray-800 mb-1">Candidate Screening Simulator</div>
+                            <p class="text-gray-700 mb-3">Interactive simulator for multi-stage hiring processes (strictness, capacity, FN/FP trade-offs).</p>
+                            <div class="flex gap-3">
+                                <a href="https://screening-simulation.streamlit.app/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-3 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Live Site</a>
+                                <a href="https://github.com/AleksandrSh/screening-simulation" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-3 py-2 rounded bg-gray-800 text-white hover:bg-gray-900">GitHub Repo</a>
+                            </div>
+                        </div>
+                        <div class="rounded-lg border border-gray-200 p-4 md:hover:shadow-lg transition-shadow">
+                            <div class="text-lg font-semibold text-gray-800 mb-1">GitHub Contributors Extractor Bookmarklet</div>
+                            <p class="text-gray-700 mb-3">Extracts contributors from GitHub repos directly via a simple bookmarklet.</p>
+                            <div class="flex gap-3">
+                                <a href="https://github.com/AleksandrSh/github-contributors-bookmarklet" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-3 py-2 rounded bg-gray-800 text-white hover:bg-gray-900">GitHub Repo</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-gray-700 mb-2">Blogs</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">Check out my blogs for insights on recruitment and the Israeli high-tech job market:</p>
             <div class="mb-2">
-                <a href="https://medium.com/@alshabanov" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline text-lg">
-                    Medium Blog
-                </a>
+                        <a href="https://medium.com/@alshabanov" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline text-lg">Medium Blog</a>
             </div>
             <div class="text-gray-700 text-lg">
                 <a href="https://t.me/LaborBazaar" target="_blank" rel="noopener noreferrer"  class="text-blue-500 hover:underline text-lg">Telegram Blog (Russian)</a>: Sharing insights on the Israeli high-tech job market, hiring trends, and career strategies for Russian-speaking new immigrants.
+                    </div>
+
+                </div>
             </div>
         </section>
 
-        <section class="bg-white rounded-lg shadow-md p-6 md:p-8">
+        <section id="languages" class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-6 scroll-mt-24">
+            <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Languages</h2>
+            <div class="grid grid-cols-1 gap-4">
+                <div>
+                    <ul class="list-disc list-inside text-gray-600">
+                        <li>Hebrew (Full Professional)</li>
+                        <li>Russian (Native or Bilingual)</li>
+                        <li>English (Full Professional)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="bg-white rounded-lg shadow-md p-6 md:p-8 scroll-mt-24">
             <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Contact</h2>
             <ul class="list-disc list-inside text-gray-700">
                 <li>Email: alshabanov27@gmail.com</li>
@@ -259,5 +303,17 @@
     <footer class="bg-gray-200 text-gray-700 py-4 text-center">
         <p>&copy; 2024 Alexander Shabanov. All rights reserved.</p>
     </footer>
+    <script>
+        (function(){
+            const btn = document.createElement('button');
+            btn.textContent = '↑ Top';
+            btn.setAttribute('aria-label','Back to top');
+            Object.assign(btn.style,{position:'fixed',right:'1rem',bottom:'1rem',padding:'0.5rem 0.75rem',borderRadius:'0.375rem',background:'#2563eb',color:'#fff',boxShadow:'0 2px 6px rgba(0,0,0,0.15)',cursor:'pointer',display:'none',zIndex:'60'});
+            btn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+            document.body.appendChild(btn);
+            window.addEventListener('scroll',()=>{const y=window.scrollY||document.documentElement.scrollTop;btn.style.display = y>400?'block':'none';});
+        })();
+    </script>
 </body>
 </html>
+
