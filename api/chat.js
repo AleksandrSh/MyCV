@@ -10,12 +10,7 @@ function getAllowedOrigins() {
   if (fromEnv) {
     return fromEnv.split(',').map((o) => o.trim()).filter(Boolean);
   }
-  return [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-    'http://localhost:5173',
-    'https://aleksandrsh.github.io',
-  ];
+  return ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:5173'];
 }
 
 function setCors(req, res) {

@@ -116,11 +116,6 @@
     const content = text.trim();
     if (!content || isLoading) return;
 
-    if (!API_URL) {
-      setStatus('Set your Vercel URL in chat-config.js, then redeploy GitHub Pages.');
-      return;
-    }
-
     messages.push({ role: 'user', content });
     saveMessages();
     renderMessages();
@@ -155,7 +150,7 @@
     } catch (err) {
       const chatError =
         err.message?.includes('Failed to fetch') || err.name === 'TypeError'
-          ? 'Could not reach the chat API. If you use GitHub Pages, set your Vercel URL in chat-config.js and ALLOWED_ORIGINS on Vercel.'
+          ? 'Could not reach the chat API. Check that the site is deployed on Vercel with the /api/chat function.'
           : err.message || 'Something went wrong';
       messages.push({ role: 'assistant', content: chatError, isError: true });
       saveMessages();

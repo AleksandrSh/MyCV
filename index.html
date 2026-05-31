@@ -50,26 +50,6 @@
       scrollbar-color: #334155 transparent;
     }
   </style>
-  <script src="chat-config.js"></script>
-  <script>
-    (function () {
-      const host = location.hostname;
-      const vercelOrigin = (window.MYCV_VERCEL_ORIGIN || '').replace(/\/$/, '');
-
-      if (host.endsWith('.vercel.app') || host === 'localhost' || host === '127.0.0.1') {
-        window.MYCV_CHAT_API = '/api/chat';
-      } else if (vercelOrigin) {
-        window.MYCV_CHAT_API = vercelOrigin + '/api/chat';
-      } else if (host.endsWith('.github.io')) {
-        window.MYCV_CHAT_API = '';
-        console.warn(
-          '[MyCV Chat] Set window.MYCV_VERCEL_ORIGIN in chat-config.js to your Vercel URL (GitHub Pages cannot run /api/chat).'
-        );
-      } else {
-        window.MYCV_CHAT_API = '/api/chat';
-      }
-    })();
-  </script>
 </head>
 <body class="min-h-screen bg-slate-950 text-slate-200">
   <!-- Navigation -->
