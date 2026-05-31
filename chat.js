@@ -169,9 +169,8 @@
   function formatChatError(response, data) {
     if (response.status === 429 || data.code === 'quota_exceeded') {
       return (
-        "Gemini API quota is used up right now, so I can't generate a reply. " +
-        'In Google AI Studio, check billing/limits or wait for the quota to reset, then try again. ' +
-        'You can also email Alex at alshabanov27@gmail.com.'
+        "I'm temporarily unavailable — please try again in a little while. " +
+        'For a direct conversation, email Alex at alshabanov27@gmail.com.'
       );
     }
     if (response.status === 503) {

@@ -140,8 +140,7 @@ module.exports = async function handler(req, res) {
       if (quotaExceeded) {
         console.error('Gemini quota exceeded', lastError);
         return res.status(429).json({
-          error:
-            'Gemini API quota exceeded. Enable billing or wait for your limit to reset in Google AI Studio.',
+          error: 'Assistant temporarily unavailable.',
           detail: lastError,
           code: 'quota_exceeded',
         });
