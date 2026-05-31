@@ -45,7 +45,16 @@
     ::selection {
       background-color: rgba(59, 130, 246, 0.3);
     }
+    #cv-chat-messages {
+      scrollbar-width: thin;
+      scrollbar-color: #334155 transparent;
+    }
   </style>
+  <script>
+    // Set full Vercel API URL here if the site is hosted on GitHub Pages only.
+    // Example: window.MYCV_CHAT_API = 'https://your-mycv.vercel.app/api/chat';
+    window.MYCV_CHAT_API = window.MYCV_CHAT_API || '/api/chat';
+  </script>
 </head>
 <body class="min-h-screen bg-slate-950 text-slate-200">
   <!-- Navigation -->
@@ -89,6 +98,19 @@
           View My Work
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-1 transition-transform"><path d="m9 18 6-6-6-6"/></svg>
         </button>
+        <button
+          type="button"
+          id="cv-chat-hero-open"
+          class="px-8 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-semibold transition-all border border-slate-700 flex items-center gap-2"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Ask AI About Me
+        </button>
+      </div>
+      <div class="flex flex-wrap gap-2 mt-6">
+        <button type="button" data-cv-chat-suggestion="What technical recruiting strengths should hiring managers know about?" class="text-xs px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-slate-400 hover:text-blue-400 hover:border-blue-500/40 transition-colors">Recruiting strengths</button>
+        <button type="button" data-cv-chat-suggestion="What tools and automation projects has Alex built?" class="text-xs px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-slate-400 hover:text-blue-400 hover:border-blue-500/40 transition-colors">Tools built</button>
+        <button type="button" data-cv-chat-suggestion="Is Alex a fit for scaling AI/ML engineering hiring in EMEA?" class="text-xs px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-slate-400 hover:text-blue-400 hover:border-blue-500/40 transition-colors">AI/ML hiring fit</button>
       </div>
     </div>
   </header>
@@ -495,6 +517,52 @@
     </div>
   </section>
 
+  <!-- AI Chat -->
+  <div id="cv-chat" class="fixed bottom-6 right-6 z-[60] flex flex-col items-end gap-3">
+    <div
+      id="cv-chat-panel"
+      class="hidden flex-col w-[min(100vw-2rem,24rem)] sm:w-96 h-[min(70vh,32rem)] rounded-2xl bg-slate-900 border border-slate-700 shadow-2xl shadow-black/40 overflow-hidden"
+      role="dialog"
+      aria-label="Chat with Alex's AI assistant"
+    >
+      <div class="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-950/80">
+        <div>
+          <p class="font-bold text-sm">Ask about Alex</p>
+          <p class="text-[10px] text-slate-500">AI representative · public profile only</p>
+        </div>
+        <button id="cv-chat-close" type="button" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors" aria-label="Close chat">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <div id="cv-chat-messages" class="flex-1 overflow-y-auto px-4 py-4 space-y-4"></div>
+      <form id="cv-chat-form" class="p-3 border-t border-slate-800 bg-slate-950/50">
+        <p id="cv-chat-status" class="text-[10px] text-slate-500 mb-2 min-h-[14px]" aria-live="polite"></p>
+        <div class="flex gap-2">
+          <input
+            id="cv-chat-input"
+            type="text"
+            autocomplete="off"
+            placeholder="Ask about experience, tools, fit…"
+            class="flex-1 rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-blue-500"
+          />
+          <button id="cv-chat-send" type="submit" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-colors">
+            Send
+          </button>
+        </div>
+      </form>
+    </div>
+    <button
+      id="cv-chat-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="cv-chat-panel"
+      class="w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/30 flex items-center justify-center transition-transform hover:scale-105"
+      aria-label="Open chat"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </button>
+  </div>
+
   <!-- Footer -->
   <footer class="py-20 border-t border-slate-900">
     <div class="container mx-auto px-6 text-center">
@@ -553,5 +621,6 @@
     // Set current year
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
+  <script src="chat.js"></script>
 </body>
 </html>
