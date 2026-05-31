@@ -81,11 +81,14 @@
         const bubble = isUser
           ? 'bg-blue-600 text-white ml-8'
           : 'bg-slate-800 text-slate-200 mr-4 border border-slate-700';
-        const label = isUser ? 'You' : 'Alex (AI)';
+        const isError = Boolean(m.isError);
+        const label = isUser ? 'You' : isError ? 'Notice' : 'Alex (AI)';
+        const errorBubble =
+          'bg-amber-950/80 text-amber-100 mr-4 border border-amber-700/60';
         return `
           <div class="flex flex-col gap-1 ${isUser ? 'items-end' : 'items-start'}">
             <span class="text-[10px] uppercase tracking-wider text-slate-500 font-bold px-1">${label}</span>
-            <div class="rounded-2xl px-4 py-3 text-sm leading-relaxed max-w-[95%] ${bubble}">
+            <div class="rounded-2xl px-4 py-3 text-sm leading-relaxed max-w-[95%] ${isError ? errorBubble : bubble}">
               ${formatMessage(m.content)}
             </div>
           </div>`;
@@ -124,32 +127,58 @@
     els.input.value = '';
     setLoading(true);
 
+    let response;
+    let data = {};
+
     try {
-      const response = await fetch(API_URL, {
+      response = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: getApiMessages() }),
       });
 
-      const data = await response.json().catch(() => ({}));
+      data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        const detail = data.detail ? ` (${data.detail})` : '';
-        throw new Error((data.error || `Request failed (${response.status})`) + detail);
+        const chatError = formatChatError(response, data);
+        messages.push({ role: 'assistant', content: chatError, isError: true });
+        saveMessages();
+        renderMessages();
+        setStatus(chatError);
+        return;
       }
 
       messages.push({ role: 'assistant', content: data.reply });
       saveMessages();
       renderMessages();
+      setStatus('');
     } catch (err) {
-      const hint =
+      const chatError =
         err.message?.includes('Failed to fetch') || err.name === 'TypeError'
-          ? ' Check chat-config.js (Vercel URL) and ALLOWED_ORIGINS on Vercel.'
-          : '';
-      setStatus((err.message || 'Something went wrong') + hint);
+          ? 'Could not reach the chat API. If you use GitHub Pages, set your Vercel URL in chat-config.js and ALLOWED_ORIGINS on Vercel.'
+          : err.message || 'Something went wrong';
+      messages.push({ role: 'assistant', content: chatError, isError: true });
+      saveMessages();
+      renderMessages();
+      setStatus(chatError);
     } finally {
       setLoading(false);
     }
+  }
+
+  function formatChatError(response, data) {
+    if (response.status === 429 || data.code === 'quota_exceeded') {
+      return (
+        "Gemini API quota is used up right now, so I can't generate a reply. " +
+        'In Google AI Studio, check billing/limits or wait for the quota to reset, then try again. ' +
+        'You can also email Alex at alshabanov27@gmail.com.'
+      );
+    }
+    if (response.status === 503) {
+      return data.error || 'Chat API is not configured on the server (missing GEMINI_API_KEY).';
+    }
+    const detail = data.detail ? ` Details: ${data.detail}` : '';
+    return (data.error || `Request failed (${response.status}).`) + detail;
   }
 
   els.toggle.addEventListener('click', () => {

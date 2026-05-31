@@ -132,6 +132,21 @@ module.exports = async function handler(req, res) {
       }
 
       lastError = data?.error?.message || JSON.stringify(data);
+      const quotaExceeded =
+        response.status === 429 ||
+        data?.error?.status === 'RESOURCE_EXHAUSTED' ||
+        /quota|rate limit|resource exhausted/i.test(String(lastError));
+
+      if (quotaExceeded) {
+        console.error('Gemini quota exceeded', lastError);
+        return res.status(429).json({
+          error:
+            'Gemini API quota exceeded. Enable billing or wait for your limit to reset in Google AI Studio.',
+          detail: lastError,
+          code: 'quota_exceeded',
+        });
+      }
+
       const retryable = response.status === 404 || /not found|invalid model/i.test(String(lastError));
       if (!retryable) break;
     }

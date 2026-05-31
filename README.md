@@ -49,6 +49,8 @@ Push to GitHub so Pages picks up the change.
 | Failed to fetch / CORS | Add `https://aleksandrsh.github.io` to `ALLOWED_ORIGINS`, redeploy |
 | 503 / not configured | Add `GEMINI_API_KEY` on Vercel, **Redeploy** |
 | 502 / model error | Try `GEMINI_MODEL=gemini-1.5-flash` in env vars |
+| 429 / quota exceeded | Free tier limit hit — enable billing in [Google AI Studio](https://aistudio.google.com/) or wait for reset |
+| Nothing visible in chat | Hard-refresh; errors now appear as amber messages in the thread |
 
 Test the API directly (replace with your Vercel URL):
 
