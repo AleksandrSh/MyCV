@@ -101,9 +101,22 @@
     setStatus(loading ? 'Thinking…' : '');
   }
 
+  function getApiMessages() {
+    const filtered = messages.filter((m) => m.role === 'user' || m.role === 'assistant');
+    while (filtered.length > 0 && filtered[0].role === 'assistant') {
+      filtered.shift();
+    }
+    return filtered;
+  }
+
   async function sendUserMessage(text) {
     const content = text.trim();
     if (!content || isLoading) return;
+
+    if (!API_URL) {
+      setStatus('Set your Vercel URL in chat-config.js, then redeploy GitHub Pages.');
+      return;
+    }
 
     messages.push({ role: 'user', content });
     saveMessages();
@@ -115,29 +128,25 @@
       const response = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: messages.filter((m) => m.role === 'user' || m.role === 'assistant'),
-        }),
+        body: JSON.stringify({ messages: getApiMessages() }),
       });
 
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        throw new Error(data.error || 'Could not reach the assistant.');
+        const detail = data.detail ? ` (${data.detail})` : '';
+        throw new Error((data.error || `Request failed (${response.status})`) + detail);
       }
 
       messages.push({ role: 'assistant', content: data.reply });
       saveMessages();
       renderMessages();
     } catch (err) {
-      messages.push({
-        role: 'assistant',
-        content:
-          "Sorry — I couldn't answer right now. If this persists, the chat API may not be deployed yet. You can reach Alex directly at alshabanov27@gmail.com.",
-      });
-      saveMessages();
-      renderMessages();
-      setStatus(err.message || 'Something went wrong');
+      const hint =
+        err.message?.includes('Failed to fetch') || err.name === 'TypeError'
+          ? ' Check chat-config.js (Vercel URL) and ALLOWED_ORIGINS on Vercel.'
+          : '';
+      setStatus((err.message || 'Something went wrong') + hint);
     } finally {
       setLoading(false);
     }

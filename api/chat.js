@@ -3,6 +3,7 @@ const { buildSystemPrompt } = require('../lib/persona');
 const MAX_MESSAGES = 24;
 const MAX_CONTENT_LENGTH = 4000;
 const DEFAULT_MODEL = 'gemini-2.0-flash';
+const FALLBACK_MODEL = 'gemini-1.5-flash';
 
 function getAllowedOrigins() {
   const fromEnv = process.env.ALLOWED_ORIGINS;
@@ -14,7 +15,6 @@ function getAllowedOrigins() {
     'http://127.0.0.1:3000',
     'http://localhost:5173',
     'https://aleksandrsh.github.io',
-    'https://aleksandrsh.github.io/MyCV',
   ];
 }
 
@@ -25,7 +25,7 @@ function setCors(req, res) {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Vary', 'Origin');
   }
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 }
 
@@ -40,6 +40,10 @@ function sanitizeMessages(messages) {
     }))
     .filter((m) => m.content.length > 0);
 
+  while (trimmed.length > 0 && trimmed[0].role === 'assistant') {
+    trimmed.shift();
+  }
+
   if (trimmed.length === 0 || trimmed[trimmed.length - 1].role !== 'user') return null;
   return trimmed;
 }
@@ -51,11 +55,41 @@ function toGeminiContents(messages) {
   }));
 }
 
+async function callGemini(apiKey, model, messages) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      systemInstruction: {
+        parts: [{ text: buildSystemPrompt() }],
+      },
+      contents: toGeminiContents(messages),
+      generationConfig: {
+        temperature: 0.4,
+        maxOutputTokens: 700,
+      },
+    }),
+  });
+
+  const data = await response.json();
+  return { response, data };
+}
+
 module.exports = async function handler(req, res) {
   setCors(req, res);
 
   if (req.method === 'OPTIONS') {
     return res.status(204).end();
+  }
+
+  if (req.method === 'GET') {
+    return res.status(200).json({
+      ok: true,
+      configured: Boolean(process.env.GEMINI_API_KEY),
+      model: process.env.GEMINI_MODEL || DEFAULT_MODEL,
+    });
   }
 
   if (req.method !== 'POST') {
@@ -65,7 +99,7 @@ module.exports = async function handler(req, res) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return res.status(503).json({
-      error: 'Chat is not configured yet. Please set GEMINI_API_KEY on the server.',
+      error: 'Chat is not configured yet. Set GEMINI_API_KEY in Vercel and redeploy.',
     });
   }
 
@@ -74,43 +108,39 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid messages payload' });
   }
 
-  const model = process.env.GEMINI_MODEL || DEFAULT_MODEL;
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
+  const primaryModel = process.env.GEMINI_MODEL || DEFAULT_MODEL;
+  const modelsToTry = primaryModel === FALLBACK_MODEL ? [primaryModel] : [primaryModel, FALLBACK_MODEL];
 
   try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        systemInstruction: {
-          parts: [{ text: buildSystemPrompt() }],
-        },
-        contents: toGeminiContents(messages),
-        generationConfig: {
-          temperature: 0.4,
-          maxOutputTokens: 700,
-        },
-      }),
+    let lastError = null;
+
+    for (const model of modelsToTry) {
+      const { response, data } = await callGemini(apiKey, model, messages);
+
+      if (response.ok) {
+        const reply = data.candidates?.[0]?.content?.parts
+          ?.map((p) => p.text)
+          .filter(Boolean)
+          .join('')
+          .trim();
+
+        if (!reply) {
+          return res.status(502).json({ error: 'Empty model response' });
+        }
+
+        return res.status(200).json({ reply });
+      }
+
+      lastError = data?.error?.message || JSON.stringify(data);
+      const retryable = response.status === 404 || /not found|invalid model/i.test(String(lastError));
+      if (!retryable) break;
+    }
+
+    console.error('Gemini error', lastError);
+    return res.status(502).json({
+      error: 'Upstream model error',
+      detail: lastError,
     });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error('Gemini error', data);
-      return res.status(502).json({ error: 'Upstream model error' });
-    }
-
-    const reply = data.candidates?.[0]?.content?.parts
-      ?.map((p) => p.text)
-      .filter(Boolean)
-      .join('')
-      .trim();
-
-    if (!reply) {
-      return res.status(502).json({ error: 'Empty model response' });
-    }
-
-    return res.status(200).json({ reply });
   } catch (err) {
     console.error('Chat handler error', err);
     return res.status(500).json({ error: 'Internal server error' });

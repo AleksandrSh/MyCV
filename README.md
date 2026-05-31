@@ -29,17 +29,37 @@ The API will be at `https://<your-vercel-domain>/api/chat`.
 
 ### 2. Connect the frontend
 
-**If you use Vercel for the whole site** (recommended): no change needed — `window.MYCV_CHAT_API` defaults to `/api/chat`.
+**If you use Vercel for the whole site** (open the `*.vercel.app` URL): no config needed — chat uses `/api/chat` on the same host.
 
-**If you keep GitHub Pages for the HTML** and Vercel only for the API, set the API URL in `index.html`:
+**If you use GitHub Pages** (`aleksandrsh.github.io/MyCV`): GitHub cannot run `/api/chat`. Edit **`chat-config.js`**:
 
-```html
-<script>
-  window.MYCV_CHAT_API = 'https://your-mycv.vercel.app/api/chat';
-</script>
+```javascript
+window.MYCV_VERCEL_ORIGIN = 'https://your-project.vercel.app';
 ```
 
-Include your GitHub Pages and Vercel URLs in `ALLOWED_ORIGINS`.
+Push to GitHub so Pages picks up the change.
+
+**ALLOWED_ORIGINS** on Vercel must include `https://aleksandrsh.github.io` (no `/MyCV` path — browsers never send the path in `Origin`).
+
+### Troubleshooting
+
+| Symptom | Fix |
+|--------|-----|
+| Status: set Vercel URL in chat-config.js | You are on GitHub Pages; set `MYCV_VERCEL_ORIGIN` |
+| Failed to fetch / CORS | Add `https://aleksandrsh.github.io` to `ALLOWED_ORIGINS`, redeploy |
+| 503 / not configured | Add `GEMINI_API_KEY` on Vercel, **Redeploy** |
+| 502 / model error | Try `GEMINI_MODEL=gemini-1.5-flash` in env vars |
+
+Test the API directly (replace with your Vercel URL):
+
+```bash
+curl -s https://your-project.vercel.app/api/chat
+# should return: {"ok":true,"configured":true,...}
+
+curl -s -X POST https://your-project.vercel.app/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"messages":[{"role":"user","content":"What does Alex do?"}]}'
+```
 
 ### 3. Update the persona
 
