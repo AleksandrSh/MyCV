@@ -2,8 +2,8 @@ const { buildSystemPrompt } = require('../lib/persona');
 
 const MAX_MESSAGES = 24;
 const MAX_CONTENT_LENGTH = 4000;
-const DEFAULT_MODEL = 'gemini-2.0-flash-lite';
-const FALLBACK_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash'];
+const DEFAULT_MODEL = 'gemini-2.5-flash';
+const FALLBACK_MODELS = ['gemini-2.0-flash', 'gemini-2.0-flash-lite'];
 
 function getApiKey() {
   const raw = process.env.GEMINI_API_KEY || '';
@@ -58,6 +58,18 @@ function toGeminiContents(messages) {
     role: m.role === 'assistant' ? 'model' : 'user',
     parts: [{ text: m.content }],
   }));
+}
+
+function classifyGeminiFailure(response, data) {
+  const message = data?.error?.message || JSON.stringify(data);
+  const quotaExceeded =
+    response.status === 429 ||
+    data?.error?.status === 'RESOURCE_EXHAUSTED' ||
+    /quota|rate limit|resource exhausted|billing details/i.test(String(message));
+  const modelNotFound =
+    response.status === 404 || /not found|not supported for generateContent/i.test(String(message));
+
+  return { message, quotaExceeded, modelNotFound };
 }
 
 async function callGemini(apiKey, model, messages) {
@@ -115,11 +127,9 @@ module.exports = async function handler(req, res) {
   }
 
   const modelsToTry = getModelList();
+  const failures = [];
 
   try {
-    let lastError = null;
-    let sawQuotaError = false;
-
     for (const model of modelsToTry) {
       const { response, data } = await callGemini(apiKey, model, messages);
 
@@ -131,40 +141,49 @@ module.exports = async function handler(req, res) {
           .trim();
 
         if (!reply) {
-          return res.status(502).json({ error: 'Empty model response' });
+          failures.push({ model, type: 'empty', message: 'Empty model response' });
+          continue;
         }
 
         return res.status(200).json({ reply, model });
       }
 
-      lastError = data?.error?.message || JSON.stringify(data);
-      const quotaExceeded =
-        response.status === 429 ||
-        data?.error?.status === 'RESOURCE_EXHAUSTED' ||
-        /quota|rate limit|resource exhausted/i.test(String(lastError));
+      const failure = classifyGeminiFailure(response, data);
+      failures.push({ model, ...failure });
+      console.error(`Gemini error for model ${model}`, failure.message);
 
-      if (quotaExceeded) {
-        sawQuotaError = true;
-        console.error(`Gemini quota/rate limit for model ${model}`, lastError);
-        continue;
+      if (!failure.quotaExceeded && !failure.modelNotFound) {
+        break;
       }
-
-      const retryable = response.status === 404 || /not found|invalid model/i.test(String(lastError));
-      if (!retryable) break;
     }
 
-    if (sawQuotaError) {
+    const quotaFailures = failures.filter((f) => f.quotaExceeded);
+    const modelFailures = failures.filter((f) => f.modelNotFound);
+
+    if (quotaFailures.length > 0) {
+      const detail = quotaFailures.map((f) => `${f.model}: ${f.message}`).join(' | ');
       return res.status(429).json({
         error: 'Assistant temporarily unavailable.',
-        detail: lastError,
+        detail,
         code: 'quota_exceeded',
+        modelsTried: modelsToTry,
       });
     }
 
-    console.error('Gemini error', lastError);
+    if (modelFailures.length === failures.length && failures.length > 0) {
+      return res.status(502).json({
+        error: 'Upstream model error',
+        detail: modelFailures.map((f) => `${f.model}: ${f.message}`).join(' | '),
+        code: 'model_not_found',
+        modelsTried: modelsToTry,
+      });
+    }
+
+    const last = failures[failures.length - 1];
     return res.status(502).json({
       error: 'Upstream model error',
-      detail: lastError,
+      detail: last ? `${last.model}: ${last.message}` : 'Unknown error',
+      modelsTried: modelsToTry,
     });
   } catch (err) {
     console.error('Chat handler error', err);
