@@ -8,7 +8,8 @@ Personal CV site for Alex Shabanov, hosted on **Vercel**, with an **AI chat** th
 2. Deploy with defaults (static `index.html` + `api/` serverless functions).
 3. **Project → Settings → Environment Variables:**
    - `GEMINI_API_KEY` — from [Google AI Studio](https://aistudio.google.com/apikey)
-   - `GEMINI_MODEL` (optional) — default `gemini-2.0-flash`
+   - `GEMINI_MODEL` (optional) — default `gemini-2.0-flash-lite`. If chat fails with quota errors, set this to the **same model** your other working site uses.
+   - Use the **same `GEMINI_API_KEY`** as the site where Gemini already works (Vercel → env vars → paste key → **Redeploy**).
    - `ALLOWED_ORIGINS` (optional) — only if you use a **custom domain**; add that origin (e.g. `https://yourdomain.com`). Same-origin Vercel URLs do not need this.
 4. **Redeploy** after changing env vars.
 
@@ -30,7 +31,7 @@ Edit `lib/persona.js` when you update experience or projects on the site.
 |--------|-----|
 | 503 / not configured | Set `GEMINI_API_KEY` on Vercel, **Redeploy** |
 | 502 / model error | Try `GEMINI_MODEL=gemini-1.5-flash` |
-| 429 / temporary unavailable | Gemini quota — check usage in Google AI Studio |
+| 429 / temporary unavailable | Quota on this key/model — copy the working key from your other site, or set `GEMINI_MODEL` to match it, then redeploy |
 | API test | `curl -s https://your-project.vercel.app/api/chat` → `"configured":true` |
 
 ## Local development

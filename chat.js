@@ -105,7 +105,9 @@
   }
 
   function getApiMessages() {
-    const filtered = messages.filter((m) => m.role === 'user' || m.role === 'assistant');
+    const filtered = messages.filter(
+      (m) => (m.role === 'user' || m.role === 'assistant') && !m.isError
+    );
     while (filtered.length > 0 && filtered[0].role === 'assistant') {
       filtered.shift();
     }

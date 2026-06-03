@@ -2,8 +2,18 @@ const { buildSystemPrompt } = require('../lib/persona');
 
 const MAX_MESSAGES = 24;
 const MAX_CONTENT_LENGTH = 4000;
-const DEFAULT_MODEL = 'gemini-2.0-flash';
-const FALLBACK_MODEL = 'gemini-1.5-flash';
+const DEFAULT_MODEL = 'gemini-2.0-flash-lite';
+const FALLBACK_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash'];
+
+function getApiKey() {
+  const raw = process.env.GEMINI_API_KEY || '';
+  return raw.trim().replace(/^["']|["']$/g, '');
+}
+
+function getModelList() {
+  const primary = process.env.GEMINI_MODEL || DEFAULT_MODEL;
+  return [primary, ...FALLBACK_MODELS.filter((m) => m !== primary)];
+}
 
 function getAllowedOrigins() {
   const fromEnv = process.env.ALLOWED_ORIGINS;
@@ -82,8 +92,9 @@ module.exports = async function handler(req, res) {
   if (req.method === 'GET') {
     return res.status(200).json({
       ok: true,
-      configured: Boolean(process.env.GEMINI_API_KEY),
+      configured: Boolean(getApiKey()),
       model: process.env.GEMINI_MODEL || DEFAULT_MODEL,
+      fallbacks: FALLBACK_MODELS,
     });
   }
 
@@ -91,7 +102,7 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = getApiKey();
   if (!apiKey) {
     return res.status(503).json({
       error: 'Chat is not configured yet. Set GEMINI_API_KEY in Vercel and redeploy.',
@@ -103,11 +114,11 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid messages payload' });
   }
 
-  const primaryModel = process.env.GEMINI_MODEL || DEFAULT_MODEL;
-  const modelsToTry = primaryModel === FALLBACK_MODEL ? [primaryModel] : [primaryModel, FALLBACK_MODEL];
+  const modelsToTry = getModelList();
 
   try {
     let lastError = null;
+    let sawQuotaError = false;
 
     for (const model of modelsToTry) {
       const { response, data } = await callGemini(apiKey, model, messages);
@@ -123,7 +134,7 @@ module.exports = async function handler(req, res) {
           return res.status(502).json({ error: 'Empty model response' });
         }
 
-        return res.status(200).json({ reply });
+        return res.status(200).json({ reply, model });
       }
 
       lastError = data?.error?.message || JSON.stringify(data);
@@ -133,16 +144,21 @@ module.exports = async function handler(req, res) {
         /quota|rate limit|resource exhausted/i.test(String(lastError));
 
       if (quotaExceeded) {
-        console.error('Gemini quota exceeded', lastError);
-        return res.status(429).json({
-          error: 'Assistant temporarily unavailable.',
-          detail: lastError,
-          code: 'quota_exceeded',
-        });
+        sawQuotaError = true;
+        console.error(`Gemini quota/rate limit for model ${model}`, lastError);
+        continue;
       }
 
       const retryable = response.status === 404 || /not found|invalid model/i.test(String(lastError));
       if (!retryable) break;
+    }
+
+    if (sawQuotaError) {
+      return res.status(429).json({
+        error: 'Assistant temporarily unavailable.',
+        detail: lastError,
+        code: 'quota_exceeded',
+      });
     }
 
     console.error('Gemini error', lastError);
